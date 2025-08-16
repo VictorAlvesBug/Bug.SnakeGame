@@ -5,7 +5,7 @@ namespace Bug.SnakeGame.Commands
 {
 	internal class MoveDownCommand : IGameCommand
 	{
-		public bool CanExecute(IGameCommand lastCommand)
+		public bool CanExecuteAfter(IGameCommand lastCommand)
 			=> lastCommand.GetType() != typeof(MoveUpCommand)
 			&& lastCommand.GetType() != GetType();
 

@@ -4,7 +4,7 @@ namespace Bug.SnakeGame.Commands
 {
 	internal class MoveRightCommand : IGameCommand
 	{
-		public bool CanExecute(IGameCommand lastCommand)
+		public bool CanExecuteAfter(IGameCommand lastCommand)
 			=> lastCommand.GetType() != typeof(MoveLeftCommand)
 			&& lastCommand.GetType() != GetType();
 

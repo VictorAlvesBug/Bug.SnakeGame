@@ -1,14 +1,15 @@
 ﻿using Bug.SnakeGame.Commands;
 using Bug.SnakeGame.Entities;
+using Bug.SnakeGame.Game;
 using Bug.SnakeGame.Rendering;
 
 namespace Bug.SnakeGame.Core
 {
 	public class GameManager
 	{
+		private InputHandler _inputHandler;
 		private CommandInvoker _commandInvoker;
 		private Queue<IGameCommand> _commands;
-		private IGameCommand _lastPressedCommand;
 		private Snake _snake;
 		private Fruit _fruit;
 
@@ -23,21 +24,20 @@ namespace Bug.SnakeGame.Core
 		{
 			_commandInvoker = new CommandInvoker();
 			_commands = new Queue<IGameCommand>();
-			_lastPressedCommand = new MoveRightCommand();
+			_inputHandler = new InputHandler(new MoveRightCommand());
 
 			_columns = screenWidth / tileSize;
 			_rows = screenHeight / tileSize;
 			_tileSize = tileSize;
 
 			Subject = new(this);
-			//subject.Attach
 			State = GameState.Running;
 
 			var initialSnakeLength = 3;
 
 			for (int i = 0; i < initialSnakeLength; i++)
 			{
-				_commands.Enqueue(_lastPressedCommand);
+				_commands.Enqueue(_inputHandler.Command);
 			}
 
 			_snake = new Snake(new Snake.Options{
@@ -48,7 +48,7 @@ namespace Bug.SnakeGame.Core
 				InitialPotition = new Point(2, 2)
 			});
 
-			_snake.SetupInitialMove(_commandInvoker, _lastPressedCommand);
+			_snake.SetupInitialMove(_commandInvoker, _inputHandler.Command);
 
 			_fruit = Fruit.Generate(new Fruit.Options
 			{
@@ -60,34 +60,12 @@ namespace Bug.SnakeGame.Core
 
 		public void ProcessInput(Keys keyCode)
 		{
-			IGameCommand? newCommand = keyCode switch
-			{
-				// Arrows
-				Keys.Up => new MoveUpCommand(),
-				Keys.Down => new MoveDownCommand(),
-				Keys.Left => new MoveLeftCommand(),
-				Keys.Right => new MoveRightCommand(),
-
-				// WASD
-				Keys.W => new MoveUpCommand(),
-				Keys.S => new MoveDownCommand(),
-				Keys.A => new MoveLeftCommand(),
-				Keys.D => new MoveRightCommand(),
-				_ => null
-			};
-
-			if (newCommand is null)
-				return;
-
-			if (newCommand != null && _commands.Count > 0 && newCommand.CanExecute(_commands.Last()))
-			{
-				_lastPressedCommand = newCommand;
-			}
+			_inputHandler.ProcessInput(keyCode);
 		}
 
 		public void Update()
 		{
-			_commands.Enqueue(_lastPressedCommand);
+			_commands.Enqueue(_inputHandler.Command);
 
 			var lastBodySegmentPositionBeforeMove = _snake.GetSegment(-1).Position;
 

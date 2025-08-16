@@ -1,6 +1,7 @@
 using Bug.SnakeGame.Commands;
 using Bug.SnakeGame.Core;
 using Bug.SnakeGame.Entities;
+using Bug.SnakeGame.Game;
 using Microsoft.VisualBasic.Devices;
 
 namespace Bug.SnakeGame
@@ -46,6 +47,7 @@ namespace Bug.SnakeGame
 
 		private void ProcessInput(object sender, KeyEventArgs e)
 		{
+			//InputHandler.ProcessInput(e.KeyCode);
 			_game.ProcessInput(e.KeyCode);
 		}
 
