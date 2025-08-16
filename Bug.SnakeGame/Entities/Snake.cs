@@ -102,18 +102,6 @@ namespace Bug.SnakeGame.Entities
 			}
 		}
 
-		public bool CheckCollisionWithTile(Point position) => _body.Any(segment => segment.Position == position);
-
-		public bool CheckCollisionWithItself()
-		{
-			if (_body.Count == 0)
-				throw new InvalidOperationException("Snake não possui nenhum segmento");
-
-			BodySegment head = _body.Peek();
-
-			return _body.Any(segment => segment != head && segment.Position == head.Position);
-		}
-
 		public List<Point> GetPositions() => _body.Select(segment => segment.Position).ToList();
 
 		public class Options

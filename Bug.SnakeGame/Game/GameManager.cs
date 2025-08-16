@@ -51,7 +51,7 @@ namespace Bug.SnakeGame.Core
 
 			switch (newState)
 			{
-				case GameState.FruitEaten:
+				case GameState.AddScore:
 					_fruit = Fruit.Generate(new Fruit.Options
 					{
 						Columns = _columns,

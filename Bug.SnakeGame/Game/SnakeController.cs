@@ -27,7 +27,7 @@ namespace Bug.SnakeGame.Game
 			_snake.SetupInitialMove(_commandInvoker, _inputHandler.Command);
 		}
 
-		public GameState Update(Point fluitPosition)
+		public GameState Update(Point fruitPosition)
 		{
 			_commands.Enqueue(_inputHandler.Command);
 
@@ -35,17 +35,16 @@ namespace Bug.SnakeGame.Game
 
 			_snake.Move(_commandInvoker, _commands);
 
-			if (_snake.CheckCollisionWithTile(fluitPosition))
-			{
-
-				_snake.AddSegment(tailPositionBeforeMovement);
-
-				return GameState.FruitEaten;
-			}
-
-			if (_snake.CheckCollisionWithItself())
+			// Colisão da cobrinha com ela mesma
+			if (CollisionManager.CheckCollision(_snake.GetPositions()))
 			{
 				return GameState.GameOver;
+			}
+
+			if (CollisionManager.CheckCollision(_snake.GetPositions().Append(fruitPosition)))
+			{
+				_snake.AddSegment(tailPositionBeforeMovement);
+				return GameState.AddScore;
 			}
 
 			while (_commands.Count > _snake.Length)
