@@ -8,9 +8,7 @@ namespace Bug.SnakeGame.Core
 	public class GameManager
 	{
 		private InputHandler _inputHandler;
-		private CommandInvoker _commandInvoker;
-		private Queue<IGameCommand> _commands;
-		private Snake _snake;
+		private SnakeController _snakeController;
 		private Fruit _fruit;
 
 		private int _columns;
@@ -18,80 +16,53 @@ namespace Bug.SnakeGame.Core
 		private int _tileSize;
 
 		public Subject<GameManager> Subject { get; private set; }
-		public GameState State { get; private set; }
 
 		public GameManager(int screenWidth, int screenHeight, int tileSize)
 		{
-			_commandInvoker = new CommandInvoker();
-			_commands = new Queue<IGameCommand>();
-			_inputHandler = new InputHandler(new MoveRightCommand());
-
 			_columns = screenWidth / tileSize;
 			_rows = screenHeight / tileSize;
 			_tileSize = tileSize;
 
-			Subject = new(this);
-			State = GameState.Running;
-
-			var initialSnakeLength = 3;
-
-			for (int i = 0; i < initialSnakeLength; i++)
+			_snakeController = new SnakeController(new Snake.Options
 			{
-				_commands.Enqueue(_inputHandler.Command);
-			}
-
-			_snake = new Snake(new Snake.Options{
 				Columns = _columns,
 				Rows = _rows,
-				SegmentSize = tileSize,
-				InitialLength = initialSnakeLength,
-				InitialPotition = new Point(2, 2)
+				SegmentSize = _tileSize,
+				InitialLength = 5,
+				InitialPotition = new Point(2, 2),
+				InitialCommand = new MoveRightCommand()
 			});
 
-			_snake.SetupInitialMove(_commandInvoker, _inputHandler.Command);
+			Subject = new(this);
 
 			_fruit = Fruit.Generate(new Fruit.Options
 			{
 				Columns = _columns,
 				Rows = _rows,
-				BlockedPositions = _snake.GetPositions()
+				BlockedPositions = _snakeController.GetSnakePositions()
 			});
 		}
 
-		public void ProcessInput(Keys keyCode)
-		{
-			_inputHandler.ProcessInput(keyCode);
-		}
+		public void ProcessInput(Keys keyCode) => _snakeController.ProcessInput(keyCode);
 
 		public void Update()
 		{
-			_commands.Enqueue(_inputHandler.Command);
+			var newState = _snakeController.Update(_fruit.Position);
 
-			var lastBodySegmentPositionBeforeMove = _snake.GetSegment(-1).Position;
-
-			_snake.Move(_commandInvoker, _commands);
-
-			if (_snake.CheckCollisionWithTile(_fruit.Position))
+			switch (newState)
 			{
-
-				_snake.AddSegment(lastBodySegmentPositionBeforeMove);
-				
-				_fruit = Fruit.Generate(new Fruit.Options
-				{
-					Columns = _columns,
-					Rows = _rows,
-					BlockedPositions = _snake.GetPositions()
-				});
+				case GameState.FruitEaten:
+					_fruit = Fruit.Generate(new Fruit.Options
+					{
+						Columns = _columns,
+						Rows = _rows,
+						BlockedPositions = _snakeController.GetSnakePositions()
+					});
+					break;
+				case GameState.GameOver:
+					Subject.Notify();
+					break;
 			}
-
-			if (_snake.CheckCollisionWithItself())
-			{
-				State = GameState.GameOver;
-				Subject.Notify();
-			}
-
-			while (_commands.Count > _snake.Length)
-				_commands.Dequeue();
 		}
 
 		public void Render(Graphics g)
@@ -102,7 +73,7 @@ namespace Bug.SnakeGame.Core
 
 			_fruit.Render(g, _tileSize);
 
-			_snake.Render(g, _tileSize);
+			_snakeController.Render(g, _tileSize);
 		}
 	}
 }

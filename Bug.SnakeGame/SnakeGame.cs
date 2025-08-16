@@ -47,18 +47,17 @@ namespace Bug.SnakeGame
 
 		private void ProcessInput(object sender, KeyEventArgs e)
 		{
-			//InputHandler.ProcessInput(e.KeyCode);
 			_game.ProcessInput(e.KeyCode);
 		}
 
 		public void Update(ISubject subject)
 		{
-			if ((subject as Subject<GameManager>).Entity.State == GameState.GameOver)
-			{
+			/*if ((subject as Subject<Snake>).Entity.State == GameState.GameOver)
+			{*/
 				clock.Stop();
 				MessageBox.Show("Game Over");
 				Setup();
-			}
+			//}
 		}
 	}
 }

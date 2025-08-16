@@ -3,6 +3,7 @@
 	public enum GameState
 	{
 		Running = 1,
-		GameOver = 2
+		FruitEaten = 2,
+		GameOver = 3
 	}
 }

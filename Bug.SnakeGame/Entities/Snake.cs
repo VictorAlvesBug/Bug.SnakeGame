@@ -123,6 +123,7 @@ namespace Bug.SnakeGame.Entities
 			public int SegmentSize { get; set; }
 			public int? InitialLength { get; set; }
 			public Point? InitialPotition { get; set; }
+			public IGameCommand InitialCommand { get; set; }
 		}
 	}
 }
