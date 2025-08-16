@@ -7,7 +7,9 @@ namespace Bug.SnakeGame.Core
 {
 	public class GameManager
 	{
-		private InputHandler _inputHandler;
+		private static Image tilesetImage = ConvertToImage(Resource1.snakeTileset);
+		private Tileset tileset = new Tileset(tilesetImage, 64, 64);
+
 		private SnakeController _snakeController;
 		private Fruit _fruit;
 
@@ -71,9 +73,16 @@ namespace Bug.SnakeGame.Core
 
 			Background.Render(g, _columns, _rows, _tileSize);
 
-			_fruit.Render(g, _tileSize);
+			_fruit.Render(g, tileset, _tileSize);
 
-			_snakeController.Render(g, _tileSize);
+			_snakeController.Render(g, tileset, _tileSize);
+		}
+
+		private static Image ConvertToImage(byte[] bytes)
+		{
+			using MemoryStream ms = new(bytes);
+
+			return Image.FromStream(ms);
 		}
 	}
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Bug.SnakeGame.Rendering;
+using System;
 
 namespace Bug.SnakeGame.Entities
 {
@@ -23,6 +24,20 @@ namespace Bug.SnakeGame.Entities
 			while (options.BlockedPositions.Contains(position.Value));
 
 			return new Fruit(position.Value);
+		}
+
+		public void Render(Graphics g, Tileset tileset, int fruitSize)
+		{
+			var tiles = new List<Tile>
+			{
+				new() {
+					Sprite = tileset.GetTile(TileType.Fruit),
+					Position = Position,
+					Size = fruitSize
+				}
+			};
+
+			tiles.Render(g);
 		}
 
 		public class Options
