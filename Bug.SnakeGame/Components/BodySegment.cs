@@ -1,15 +1,15 @@
-﻿using Bug.SnakeGame.Core;
+﻿using Bug.SnakeGame.Interfaces;
 
-namespace Bug.SnakeGame.Entities
+namespace Bug.SnakeGame.Components
 {
 	public class BodySegment : IMovable
 	{
-		private ValueRange _xRange;
+		private UnitRange _xRange;
 
-		private ValueRange _yRange;
+		private UnitRange _yRange;
 		public Point Position => new(_xRange.Value, _yRange.Value);
 
-		public BodySegment(ValueRange xRange, ValueRange yRange)
+		public BodySegment(UnitRange xRange, UnitRange yRange)
 		{
 			_xRange = xRange;
 			_yRange = yRange;

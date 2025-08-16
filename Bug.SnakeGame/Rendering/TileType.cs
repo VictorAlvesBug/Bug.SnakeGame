@@ -1,4 +1,4 @@
-﻿namespace Bug.SnakeGame.Entities
+﻿namespace Bug.SnakeGame.Rendering
 {
 	public enum TileType
 	{
@@ -8,7 +8,7 @@
 		SnakeHeadUp = 3,
 		SnakeHeadRight = 4,
 		SnakeBodyUpRight = 5,
-		
+
 		SnakeBodyVertical = 7,
 		SnakeHeadLeft = 8,
 		SnakeHeadDown = 9,

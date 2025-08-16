@@ -1,6 +1,6 @@
-﻿namespace Bug.SnakeGame.Entities
+﻿namespace Bug.SnakeGame.Components
 {
-	public class ValueRange
+	public class UnitRange
 	{
 		public int Value { get; set; } = 0;
 		public int Min { get; set; } = 0;
@@ -8,7 +8,7 @@
 		public int Step { get; set; } = 1;
 		public bool CanOverflow { get; set; } = false;
 
-		public ValueRange(Options options)
+		public UnitRange(Options options)
 		{
 			Value = options.InitialValue ?? Value;
 			Min = options.Min ?? Min;
@@ -17,13 +17,13 @@
 			CanOverflow = options.CanOverflow ?? CanOverflow;
 		}
 
-		public ValueRange Increment()
+		public UnitRange Increment()
 		{
 			var newValue = Value + Step;
 
-			return new ValueRange(new Options
+			return new UnitRange(new Options
 			{
-				InitialValue = newValue <= Max ? newValue : (CanOverflow ? Min : throw new InvalidOperationException($"Valor máximo {Max} excedido")),
+				InitialValue = newValue <= Max ? newValue : CanOverflow ? Min : throw new InvalidOperationException($"Valor máximo {Max} excedido"),
 				Min = Min,
 				Max = Max,
 				Step = Step,
@@ -32,13 +32,13 @@
 
 		}
 
-		public ValueRange Decrement()
+		public UnitRange Decrement()
 		{
 			var newValue = Value - Step;
 
-			return new ValueRange(new Options
+			return new UnitRange(new Options
 			{
-				InitialValue = newValue >= Min ? newValue : (CanOverflow ? Max : throw new InvalidOperationException($"Valor mínimo {Min} excedido")),
+				InitialValue = newValue >= Min ? newValue : CanOverflow ? Max : throw new InvalidOperationException($"Valor mínimo {Min} excedido"),
 				Min = Min,
 				Max = Max,
 				Step = Step,

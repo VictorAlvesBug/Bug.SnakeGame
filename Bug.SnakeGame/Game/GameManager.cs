@@ -48,7 +48,7 @@ namespace Bug.SnakeGame.Core
 				InitialPotition = new Point(2, 2)
 			});
 
-			_snake.InitialMove(_commandInvoker, _lastPressedCommand);
+			_snake.SetupInitialMove(_commandInvoker, _lastPressedCommand);
 
 			_fruit = Fruit.Generate(new Fruit.Options
 			{

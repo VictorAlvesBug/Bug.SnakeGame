@@ -1,4 +1,4 @@
-﻿namespace Bug.SnakeGame.Core
+﻿namespace Bug.SnakeGame.Interfaces
 {
 	public interface IMovable
 	{

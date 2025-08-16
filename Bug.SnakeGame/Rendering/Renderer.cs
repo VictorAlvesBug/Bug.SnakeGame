@@ -1,4 +1,5 @@
 ﻿using Bug.SnakeGame.Entities;
+using Bug.SnakeGame.Rendering;
 
 namespace Bug.SnakeGame.Rendering
 {

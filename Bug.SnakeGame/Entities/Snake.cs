@@ -1,4 +1,5 @@
 ﻿using Bug.SnakeGame.Commands;
+using Bug.SnakeGame.Components;
 
 namespace Bug.SnakeGame.Entities
 {
@@ -29,13 +30,13 @@ namespace Bug.SnakeGame.Entities
 			for (int bodyIndex = 0; bodyIndex < options.InitialLength; bodyIndex++)
 			{
 				var segment = new BodySegment(
-					xRange: new ValueRange(new ValueRange.Options
+					xRange: new UnitRange(new UnitRange.Options
 					{
 						InitialValue = options.InitialPotition?.X ?? 1,
 						Max = _columns - 1,
 						CanOverflow = true,
 					}),
-					yRange: new ValueRange(new ValueRange.Options
+					yRange: new UnitRange(new UnitRange.Options
 					{
 						InitialValue = options.InitialPotition?.Y ?? (int) Math.Floor(_rows/2.0),
 						Max = _rows - 1,
@@ -47,7 +48,7 @@ namespace Bug.SnakeGame.Entities
 			}
 		}
 
-		public void InitialMove(CommandInvoker commandInvoker, IGameCommand initialCommands)
+		public void SetupInitialMove(CommandInvoker commandInvoker, IGameCommand initialCommands)
 		{
 			for (int segmentIndex = 0; segmentIndex < _body.Count; segmentIndex++)
 			{
@@ -75,13 +76,13 @@ namespace Bug.SnakeGame.Entities
 		public void AddSegment(Point point)
 		{
 			var newBodySegment = new BodySegment(
-				xRange: new ValueRange(new ValueRange.Options
+				xRange: new UnitRange(new UnitRange.Options
 				{
 					InitialValue = point.X,
 					Max = _columns - 1,
 					CanOverflow = true,
 				}),
-				yRange: new ValueRange(new ValueRange.Options
+				yRange: new UnitRange(new UnitRange.Options
 				{
 					InitialValue = point.Y,
 					Max = _rows - 1,

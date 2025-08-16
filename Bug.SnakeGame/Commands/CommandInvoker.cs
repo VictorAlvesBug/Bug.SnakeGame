@@ -1,4 +1,4 @@
-﻿using Bug.SnakeGame.Core;
+﻿using Bug.SnakeGame.Interfaces;
 
 namespace Bug.SnakeGame.Commands
 {
