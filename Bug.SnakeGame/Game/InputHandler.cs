@@ -32,7 +32,7 @@ namespace Bug.SnakeGame.Game
 			if (newCommand is null)
 				return;
 
-			if (newCommand != null && newCommand.CanExecuteAfter(Command))
+			if (newCommand.CanExecuteAfter(Command))
 			{
 				Command = newCommand;
 			}

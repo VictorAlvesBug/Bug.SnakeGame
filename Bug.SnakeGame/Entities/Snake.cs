@@ -1,5 +1,6 @@
 ﻿using Bug.SnakeGame.Commands;
 using Bug.SnakeGame.Components;
+using Bug.SnakeGame.Core;
 
 namespace Bug.SnakeGame.Entities
 {
@@ -112,6 +113,8 @@ namespace Bug.SnakeGame.Entities
 			public int? InitialLength { get; set; }
 			public Point? InitialPotition { get; set; }
 			public IGameCommand InitialCommand { get; set; }
+			public GameManager GameManager { get; set; }
+			public SnakeGame SnakeGame { get; set; }
 		}
 	}
 }

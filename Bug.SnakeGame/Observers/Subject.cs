@@ -23,15 +23,12 @@
 
 		public void Notify()
 		{
+
+
 			foreach (var observer in _observers)
 			{
-				observer.Update(this);
+				observer.OnNotify(this);
 			}
-		}
-
-		public void SomeBusinessLogic()
-		{
-			this.Notify();
 		}
 	}
 }

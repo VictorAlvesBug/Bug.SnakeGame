@@ -1,8 +1,6 @@
-using Bug.SnakeGame.Commands;
 using Bug.SnakeGame.Core;
 using Bug.SnakeGame.Entities;
 using Bug.SnakeGame.Game;
-using Microsoft.VisualBasic.Devices;
 
 namespace Bug.SnakeGame
 {
@@ -12,17 +10,15 @@ namespace Bug.SnakeGame
 		private Bitmap _bitmap;
 		private Graphics _graphics;
 
-		private const int ScreenWidth = 400;
-		private const int ScreenHeight = 400;
-		private const int TileSize = 16;
+		private const int ScreenWidth = 800;
+		private const int ScreenHeight = 800;
+		private const int TileSize = 50;
 
 		public SnakeGame()
 		{
 			InitializeComponent();
 			Setup();
 			KeyDown += ProcessInput;
-			//_game.OnGameOver(clock.Stop);
-			//_game.AfterGameOver(Setup);
 
 			Width = ScreenWidth + 16;
 			Height = ScreenHeight + 39;
@@ -34,8 +30,13 @@ namespace Bug.SnakeGame
 		private void Setup()
 		{
 			clock.Start();
-			_game = new GameManager(ScreenWidth, ScreenHeight, TileSize);
-			_game.Subject.Attach(this);
+			_game = new GameManager(new GameManager.Options
+			{
+				ScreenWidth = ScreenWidth,
+				ScreenHeight = ScreenHeight,
+				TileSize = TileSize,
+				SnakeGame = this
+			});
 		}
 
 		private void GameLoop(object sender, EventArgs e)
@@ -50,14 +51,16 @@ namespace Bug.SnakeGame
 			_game.ProcessInput(e.KeyCode);
 		}
 
-		public void Update(ISubject subject)
+		public void OnNotify(ISubject subject)
 		{
-			/*if ((subject as Subject<Snake>).Entity.State == GameState.GameOver)
-			{*/
+			var concreteSubject = subject as Subject<SnakeController>;
+
+			if (concreteSubject is not null && concreteSubject.Entity.State == GameState.GameOver)
+			{
 				clock.Stop();
 				MessageBox.Show("Game Over");
 				Setup();
-			//}
+			}
 		}
 	}
 }

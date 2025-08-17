@@ -1,4 +1,5 @@
 ﻿using Bug.SnakeGame.Commands;
+using Bug.SnakeGame.Core;
 using Bug.SnakeGame.Entities;
 using Bug.SnakeGame.Rendering;
 
@@ -10,6 +11,8 @@ namespace Bug.SnakeGame.Game
 		private CommandInvoker _commandInvoker;
 		private Queue<IGameCommand> _commands;
 		private Snake _snake;
+		public GameState State { get; private set; }
+		public Subject<SnakeController> Subject { get; private set; }
 
 		public SnakeController(Snake.Options options)
 		{
@@ -25,9 +28,13 @@ namespace Bug.SnakeGame.Game
 			_snake = new Snake(options);
 
 			_snake.SetupInitialMove(_commandInvoker, _inputHandler.Command);
+
+			Subject = new(this);
+			Subject.Attach(options.GameManager);
+			Subject.Attach(options.SnakeGame);
 		}
 
-		public GameState Update(Point fruitPosition)
+		public void Update(Point fruitPosition)
 		{
 			_commands.Enqueue(_inputHandler.Command);
 
@@ -38,19 +45,25 @@ namespace Bug.SnakeGame.Game
 			// Colisão da cobrinha com ela mesma
 			if (CollisionManager.CheckCollision(_snake.GetPositions()))
 			{
-				return GameState.GameOver;
+				State = GameState.GameOver;
+				Subject.Notify();
+				return;
 			}
 
+			// Colisão da cobrinha com a maçã
 			if (CollisionManager.CheckCollision(_snake.GetPositions().Append(fruitPosition)))
 			{
 				_snake.AddSegment(tailPositionBeforeMovement);
-				return GameState.AddScore;
+				State = GameState.AddScore;
+				Subject.Notify();
+				return;
 			}
 
 			while (_commands.Count > _snake.Length)
 				_commands.Dequeue();
 
-			return GameState.Running;
+			State = GameState.Running;
+			Subject.Notify();
 		}
 
 		public void ProcessInput(Keys keyCode) => _inputHandler.ProcessInput(keyCode);

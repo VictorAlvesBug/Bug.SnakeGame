@@ -2,10 +2,11 @@
 using Bug.SnakeGame.Entities;
 using Bug.SnakeGame.Game;
 using Bug.SnakeGame.Rendering;
+using System.Xml.Linq;
 
 namespace Bug.SnakeGame.Core
 {
-	public class GameManager
+	public class GameManager : IObserver
 	{
 		private static Image tilesetImage = ConvertToImage(Resource1.snakeTileset);
 		private Tileset tileset = new Tileset(tilesetImage, 64, 64);
@@ -17,13 +18,11 @@ namespace Bug.SnakeGame.Core
 		private int _rows;
 		private int _tileSize;
 
-		public Subject<GameManager> Subject { get; private set; }
-
-		public GameManager(int screenWidth, int screenHeight, int tileSize)
+		public GameManager(Options options)
 		{
-			_columns = screenWidth / tileSize;
-			_rows = screenHeight / tileSize;
-			_tileSize = tileSize;
+			_columns = options.ScreenWidth / options.TileSize;
+			_rows = options.ScreenHeight / options.TileSize;
+			_tileSize = options.TileSize;
 
 			_snakeController = new SnakeController(new Snake.Options
 			{
@@ -32,10 +31,10 @@ namespace Bug.SnakeGame.Core
 				SegmentSize = _tileSize,
 				InitialLength = 5,
 				InitialPotition = new Point(2, 2),
-				InitialCommand = new MoveRightCommand()
+				InitialCommand = new MoveRightCommand(),
+				GameManager = this,
+				SnakeGame = options.SnakeGame
 			});
-
-			Subject = new(this);
 
 			_fruit = Fruit.Generate(new Fruit.Options
 			{
@@ -49,21 +48,21 @@ namespace Bug.SnakeGame.Core
 
 		public void Update()
 		{
-			var newState = _snakeController.Update(_fruit.Position);
+			_snakeController.Update(_fruit.Position);
+		}
 
-			switch (newState)
+		public void OnNotify(ISubject subject)
+		{
+			var concreteSubject = subject as Subject<SnakeController>;
+
+			if (concreteSubject is not null && concreteSubject.Entity.State == GameState.AddScore)
 			{
-				case GameState.AddScore:
-					_fruit = Fruit.Generate(new Fruit.Options
-					{
-						Columns = _columns,
-						Rows = _rows,
-						BlockedPositions = _snakeController.GetSnakePositions()
-					});
-					break;
-				case GameState.GameOver:
-					Subject.Notify();
-					break;
+				_fruit = Fruit.Generate(new Fruit.Options
+				{
+					Columns = _columns,
+					Rows = _rows,
+					BlockedPositions = _snakeController.GetSnakePositions()
+				});
 			}
 		}
 
@@ -83,6 +82,14 @@ namespace Bug.SnakeGame.Core
 			using MemoryStream ms = new(bytes);
 
 			return Image.FromStream(ms);
+		}
+
+		public class Options
+		{
+			public int ScreenWidth { get; set; }
+			public int ScreenHeight { get; set; }
+			public int TileSize { get; set; }
+			public SnakeGame SnakeGame { get; set; }
 		}
 	}
 }

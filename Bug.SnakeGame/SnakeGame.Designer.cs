@@ -38,22 +38,23 @@
 			// 
 			ptbPlayGround.Dock = DockStyle.Fill;
 			ptbPlayGround.Location = new Point(0, 0);
+			ptbPlayGround.Margin = new Padding(3, 4, 3, 4);
 			ptbPlayGround.Name = "ptbPlayGround";
-			ptbPlayGround.Size = new Size(500, 500);
+			ptbPlayGround.Size = new Size(571, 667);
 			ptbPlayGround.TabIndex = 0;
 			ptbPlayGround.TabStop = false;
 			// 
 			// clock
 			// 
-			clock.Interval = 200;
 			clock.Tick += GameLoop;
 			// 
 			// SnakeGame
 			// 
-			AutoScaleDimensions = new SizeF(7F, 15F);
+			AutoScaleDimensions = new SizeF(8F, 20F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(500, 500);
+			ClientSize = new Size(571, 667);
 			Controls.Add(ptbPlayGround);
+			Margin = new Padding(3, 4, 3, 4);
 			Name = "SnakeGame";
 			StartPosition = FormStartPosition.CenterScreen;
 			Text = "Snake Game";
