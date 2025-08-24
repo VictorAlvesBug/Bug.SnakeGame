@@ -1,26 +1,42 @@
-﻿using Bug.SnakeGame.Components;
-namespace Bug.SnakeGame.Game
+﻿namespace Bug.SnakeGame.Game
 {
 	public static class CollisionManager
 	{
-		public static bool CheckCollision(IEnumerable<Point> positionsToCheck)
+		public static bool CheckSelfCollision(IEnumerable<Point> positions)
 		{
-			var positions = positionsToCheck.ToList();
+			var positionsList = positions.ToList();
 
-			if(positions.Count == 0)
+			if(positionsList.Count == 0)
 				return false;
 
-			for (var indexA = 0; indexA < positions.Count; indexA++)
+			for (var indexA = 0; indexA < positionsList.Count; indexA++)
 			{
-				var positionA = positions[indexA];
+				var positionA = positionsList[indexA];
 
-				for (var indexB = indexA + 1; indexB < positions.Count; indexB++)
+				for (var indexB = indexA + 1; indexB < positionsList.Count; indexB++)
 				{
-					var positionB = positions[indexB];
+					var positionB = positionsList[indexB];
 
 					if (positionA == positionB && indexA != indexB)
 						return true;
 				}
+			}
+
+			return false;
+		}
+		public static bool CheckCollisionWithPosition(IEnumerable<Point> positions, Point otherPosition)
+		{
+			var positionsList = positions.ToList();
+
+			if (positionsList.Count == 0)
+				return false;
+
+			for (var index = 0; index < positionsList.Count; index++)
+			{
+				var position = positionsList[index];
+
+				if (position == otherPosition)
+					return true;
 			}
 
 			return false;

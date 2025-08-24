@@ -1,47 +1,35 @@
 ﻿using Bug.SnakeGame.Commands;
+using Bug.SnakeGame.DomainEvents;
 using Bug.SnakeGame.Entities;
 using Bug.SnakeGame.Game;
+using Bug.SnakeGame.Infrastructure;
 using Bug.SnakeGame.Rendering;
-using System.Xml.Linq;
 
 namespace Bug.SnakeGame.Core
 {
-	public class GameManager : IObserver
+	public class GameManager : EventBusAccessor, IDisposable
 	{
+		private bool _disposed;
+		private readonly IDisposable _subscriptionFruitEaten;
+
 		private static Image tilesetImage = ConvertToImage(Resource1.snakeTileset);
-		private Tileset tileset = new Tileset(tilesetImage, 64, 64);
+		private Tileset tileset = new Tileset(tilesetImage);
 
 		private SnakeController _snakeController;
 		private Fruit _fruit;
 
-		private int _columns;
-		private int _rows;
-		private int _tileSize;
-
-		public GameManager(Options options)
+		public GameManager()
 		{
-			_columns = options.ScreenWidth / options.TileSize;
-			_rows = options.ScreenHeight / options.TileSize;
-			_tileSize = options.TileSize;
+			_subscriptionFruitEaten = Bus.Subscribe<FruitEaten>(OnFruitEaten);
 
 			_snakeController = new SnakeController(new Snake.Options
 			{
-				Columns = _columns,
-				Rows = _rows,
-				SegmentSize = _tileSize,
 				InitialLength = 5,
 				InitialPotition = new Point(2, 2),
-				InitialCommand = new MoveRightCommand(),
-				GameManager = this,
-				SnakeGame = options.SnakeGame
+				InitialCommand = new MoveRightCommand()
 			});
 
-			_fruit = Fruit.Generate(new Fruit.Options
-			{
-				Columns = _columns,
-				Rows = _rows,
-				BlockedPositions = _snakeController.GetSnakePositions()
-			});
+			OnFruitEaten();
 		}
 
 		public void ProcessInput(Keys keyCode) => _snakeController.ProcessInput(keyCode);
@@ -51,30 +39,23 @@ namespace Bug.SnakeGame.Core
 			_snakeController.Update(_fruit.Position);
 		}
 
-		public void OnNotify(ISubject subject)
+		public void OnFruitEaten(FruitEaten e = null)
 		{
-			var concreteSubject = subject as Subject<SnakeController>;
-
-			if (concreteSubject is not null && concreteSubject.Entity.State == GameState.AddScore)
+			_fruit = Fruit.Generate(new Fruit.Options
 			{
-				_fruit = Fruit.Generate(new Fruit.Options
-				{
-					Columns = _columns,
-					Rows = _rows,
-					BlockedPositions = _snakeController.GetSnakePositions()
-				});
-			}
+				BlockedPositions = _snakeController.GetSnakePositions()
+			});
 		}
 
 		public void Render(Graphics g)
 		{
 			g.Clear(Color.White);
 
-			Background.Render(g, _columns, _rows, _tileSize);
+			Background.Render(g);
 
-			_fruit.Render(g, tileset, _tileSize);
+			_fruit.Render(g, tileset);
 
-			_snakeController.Render(g, tileset, _tileSize);
+			_snakeController.Render(g, tileset);
 		}
 
 		private static Image ConvertToImage(byte[] bytes)
@@ -84,12 +65,14 @@ namespace Bug.SnakeGame.Core
 			return Image.FromStream(ms);
 		}
 
-		public class Options
+		public void Dispose()
 		{
-			public int ScreenWidth { get; set; }
-			public int ScreenHeight { get; set; }
-			public int TileSize { get; set; }
-			public SnakeGame SnakeGame { get; set; }
+			if (_disposed)
+				return;
+
+			_disposed = true;
+
+			_subscriptionFruitEaten.Dispose();
 		}
 	}
 }

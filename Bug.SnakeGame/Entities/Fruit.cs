@@ -1,5 +1,5 @@
-﻿using Bug.SnakeGame.Rendering;
-using System;
+﻿using Bug.SnakeGame.Game;
+using Bug.SnakeGame.Rendering;
 
 namespace Bug.SnakeGame.Entities
 {
@@ -19,21 +19,21 @@ namespace Bug.SnakeGame.Entities
 
 			do
 			{
-				position = new Point(random.Next(options.Columns), random.Next(options.Rows));
+				position = new Point(random.Next(GameConfig.GridColumns), random.Next(GameConfig.GridRows));
 			}
 			while (options.BlockedPositions.Contains(position.Value));
 
 			return new Fruit(position.Value);
 		}
 
-		public void Render(Graphics g, Tileset tileset, int fruitSize)
+		public void Render(Graphics g, Tileset tileset)
 		{
 			var tiles = new List<Tile>
 			{
 				new() {
 					Sprite = tileset.GetTile(TileType.Fruit),
 					Position = Position,
-					Size = fruitSize
+					Size = GameConfig.GridTileSize
 				}
 			};
 
@@ -42,8 +42,6 @@ namespace Bug.SnakeGame.Entities
 
 		public class Options
 		{
-			public int Columns { get; set; }
-			public int Rows { get; set; }
 			public List<Point> BlockedPositions { get; set; } = [];
 		}
 	}

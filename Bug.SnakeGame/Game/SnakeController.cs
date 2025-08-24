@@ -1,18 +1,17 @@
 ﻿using Bug.SnakeGame.Commands;
-using Bug.SnakeGame.Core;
+using Bug.SnakeGame.DomainEvents;
 using Bug.SnakeGame.Entities;
+using Bug.SnakeGame.Infrastructure;
 using Bug.SnakeGame.Rendering;
 
 namespace Bug.SnakeGame.Game
 {
-	public class SnakeController
+	public class SnakeController : EventBusAccessor
 	{
 		private InputHandler _inputHandler;
 		private CommandInvoker _commandInvoker;
 		private Queue<IGameCommand> _commands;
 		private Snake _snake;
-		public GameState State { get; private set; }
-		public Subject<SnakeController> Subject { get; private set; }
 
 		public SnakeController(Snake.Options options)
 		{
@@ -28,10 +27,6 @@ namespace Bug.SnakeGame.Game
 			_snake = new Snake(options);
 
 			_snake.SetupInitialMove(_commandInvoker, _inputHandler.Command);
-
-			Subject = new(this);
-			Subject.Attach(options.GameManager);
-			Subject.Attach(options.SnakeGame);
 		}
 
 		public void Update(Point fruitPosition)
@@ -42,35 +37,28 @@ namespace Bug.SnakeGame.Game
 
 			_snake.Move(_commandInvoker, _commands);
 
-			// Colisão da cobrinha com ela mesma
-			if (CollisionManager.CheckCollision(_snake.GetPositions()))
+			if (CheckCollisionWithItself())
 			{
-				State = GameState.GameOver;
-				Subject.Notify();
+				Bus.Publish(new SnakeDied("Colisão da snake consigo mesma"));
 				return;
 			}
 
-			// Colisão da cobrinha com a maçã
-			if (CollisionManager.CheckCollision(_snake.GetPositions().Append(fruitPosition)))
+			if (CheckCollisionWithFruit(fruitPosition))
 			{
 				_snake.AddSegment(tailPositionBeforeMovement);
-				State = GameState.AddScore;
-				Subject.Notify();
+				Bus.Publish(new FruitEaten());
 				return;
 			}
 
 			while (_commands.Count > _snake.Length)
 				_commands.Dequeue();
-
-			State = GameState.Running;
-			Subject.Notify();
 		}
 
 		public void ProcessInput(Keys keyCode) => _inputHandler.ProcessInput(keyCode);
 
 		public List<Point> GetSnakePositions() => _snake.GetPositions();
 
-		public void Render(Graphics g, Tileset tileset, int segmentSize)
+		public void Render(Graphics g, Tileset tileset)
 		{
 			List<Tile> tiles = [];
 
@@ -82,7 +70,7 @@ namespace Bug.SnakeGame.Game
 				{
 					Sprite = tileset.GetTile(GetSnakeTileType(index)),
 					Position = positions[index],
-					Size = segmentSize
+					Size = GameConfig.GridTileSize
 				});
 			}
 
@@ -218,5 +206,8 @@ namespace Bug.SnakeGame.Game
 
 			throw new InvalidOperationException("Impossível definir um Tile para o segmento");
 		}
+
+		private bool CheckCollisionWithItself() => CollisionManager.CheckSelfCollision(_snake.GetPositions());
+		private bool CheckCollisionWithFruit(Point fruitPosition) => CollisionManager.CheckCollisionWithPosition(_snake.GetPositions(), fruitPosition);
 	}
 }

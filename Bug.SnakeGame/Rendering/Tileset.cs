@@ -1,4 +1,4 @@
-﻿using Bug.SnakeGame.Rendering;
+﻿using Bug.SnakeGame.Game;
 
 namespace Bug.SnakeGame.Rendering
 {
@@ -6,21 +6,21 @@ namespace Bug.SnakeGame.Rendering
 	{
 		private List<Bitmap> _tiles = [];
 
-		public Tileset(Image tilesetImage, int tileWidth, int tileHeight)
+		public Tileset(Image tilesetImage)
 		{
-			int cols = tilesetImage.Width / tileWidth;
-			int rows = tilesetImage.Height / tileHeight;
+			int tilesetCols = tilesetImage.Width / GameConfig.SourceTileSize;
+			int tilesetRows = tilesetImage.Height / GameConfig.SourceTileSize;
 
-			for (int y = 0; y < rows; y++)
+			for (int y = 0; y < tilesetRows; y++)
 			{
-				for (int x = 0; x < cols; x++)
+				for (int x = 0; x < tilesetCols; x++)
 				{
-					Rectangle cropRect = new Rectangle(x * tileWidth, y * tileHeight, tileWidth, tileHeight);
+					Rectangle cropRect = new Rectangle(x * GameConfig.SourceTileSize, y * GameConfig.SourceTileSize, GameConfig.SourceTileSize, GameConfig.SourceTileSize);
 
-					Bitmap tile = new Bitmap(tileWidth, tileHeight);
+					Bitmap tile = new(GameConfig.SourceTileSize, GameConfig.SourceTileSize);
 
 					using Graphics g = Graphics.FromImage(tile);
-					g.DrawImage(tilesetImage, new Rectangle(0, 0, tileWidth, tileHeight), cropRect, GraphicsUnit.Pixel);
+					g.DrawImage(tilesetImage, new Rectangle(0, 0, GameConfig.SourceTileSize, GameConfig.SourceTileSize), cropRect, GraphicsUnit.Pixel);
 
 					_tiles.Add(tile);
 				}

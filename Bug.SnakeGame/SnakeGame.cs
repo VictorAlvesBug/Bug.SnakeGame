@@ -1,42 +1,40 @@
 using Bug.SnakeGame.Core;
-using Bug.SnakeGame.Entities;
+using Bug.SnakeGame.DomainEvents;
 using Bug.SnakeGame.Game;
+using Bug.SnakeGame.Infrastructure;
 
 namespace Bug.SnakeGame
 {
-	public partial class SnakeGame : Form, IObserver
+	public partial class SnakeGame : Form
 	{
 		private GameManager _game;
 		private Bitmap _bitmap;
 		private Graphics _graphics;
 
-		private const int ScreenWidth = 800;
-		private const int ScreenHeight = 800;
-		private const int TileSize = 50;
-
 		public SnakeGame()
 		{
+			var bus = new InMemoryEventBus();
+			bus.Subscribe<SnakeDied>(OnSnakeDied);
+			EventBusAccessor.SetEventBus(bus);
+
 			InitializeComponent();
 			Setup();
 			KeyDown += ProcessInput;
 
-			Width = ScreenWidth + 16;
-			Height = ScreenHeight + 39;
+			Width = GameConfig.ScreenWidth + 16;
+			Height = GameConfig.ScreenHeight + 39;
 
-			_bitmap = new Bitmap(ScreenWidth, ScreenHeight);
+			_bitmap = new Bitmap(GameConfig.ScreenWidth, GameConfig.ScreenHeight);
 			_graphics = Graphics.FromImage(_bitmap);
 		}
 
 		private void Setup()
 		{
 			clock.Start();
-			_game = new GameManager(new GameManager.Options
-			{
-				ScreenWidth = ScreenWidth,
-				ScreenHeight = ScreenHeight,
-				TileSize = TileSize,
-				SnakeGame = this
-			});
+
+			_game?.Dispose();
+
+			_game = new GameManager();
 		}
 
 		private void GameLoop(object sender, EventArgs e)
@@ -51,16 +49,11 @@ namespace Bug.SnakeGame
 			_game.ProcessInput(e.KeyCode);
 		}
 
-		public void OnNotify(ISubject subject)
+		public void OnSnakeDied(SnakeDied e)
 		{
-			var concreteSubject = subject as Subject<SnakeController>;
-
-			if (concreteSubject is not null && concreteSubject.Entity.State == GameState.GameOver)
-			{
-				clock.Stop();
-				MessageBox.Show("Game Over");
-				Setup();
-			}
+			clock.Stop();
+			MessageBox.Show(e.Reason, "Game Over");
+			Setup();
 		}
 	}
 }

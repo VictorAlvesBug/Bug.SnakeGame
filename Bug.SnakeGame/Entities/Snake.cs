@@ -1,30 +1,20 @@
 ﻿using Bug.SnakeGame.Commands;
 using Bug.SnakeGame.Components;
 using Bug.SnakeGame.Core;
+using Bug.SnakeGame.Game;
 
 namespace Bug.SnakeGame.Entities
 {
 	public class Snake
 	{
 		private Queue<BodySegment> _body;
-		private int _columns;
-		private int _rows;
 
 		public int Length => _body.Count;
 
 		public Snake(Options options)
 		{
-			if (options.Columns < 8 || options.Rows < 8)
-				throw new ArgumentException("Grade deve ser no mínimo 8x8");
-
-			if (options.SegmentSize < 5)
-				throw new ArgumentException("Segmento deve ter ao menos 5 pixels", nameof(options.SegmentSize));
-
 			if (options.InitialLength < 1)
 				throw new ArgumentException("Snake inicial deve ter ao menos 1 segmento", nameof(options.InitialLength));
-
-			_columns = options.Columns;
-			_rows = options.Rows;
 
 			_body = new Queue<BodySegment>();
 
@@ -34,13 +24,13 @@ namespace Bug.SnakeGame.Entities
 					xRange: new UnitRange(new UnitRange.Options
 					{
 						InitialValue = options.InitialPotition?.X ?? 1,
-						Max = _columns - 1,
+						Max = GameConfig.GridColumns - 1,
 						CanOverflow = true,
 					}),
 					yRange: new UnitRange(new UnitRange.Options
 					{
-						InitialValue = options.InitialPotition?.Y ?? (int) Math.Floor(_rows/2.0),
-						Max = _rows - 1,
+						InitialValue = options.InitialPotition?.Y ?? (int) Math.Floor(GameConfig.GridRows / 2.0),
+						Max = GameConfig.GridRows - 1,
 						CanOverflow = true,
 					})
 				);
@@ -80,13 +70,13 @@ namespace Bug.SnakeGame.Entities
 				xRange: new UnitRange(new UnitRange.Options
 				{
 					InitialValue = point.X,
-					Max = _columns - 1,
+					Max = GameConfig.GridColumns - 1,
 					CanOverflow = true,
 				}),
 				yRange: new UnitRange(new UnitRange.Options
 				{
 					InitialValue = point.Y,
-					Max = _rows - 1,
+					Max = GameConfig.GridRows - 1,
 					CanOverflow = true,
 				})
 			);
@@ -107,14 +97,9 @@ namespace Bug.SnakeGame.Entities
 
 		public class Options
 		{
-			public int Columns { get; set; }
-			public int Rows { get; set; }
-			public int SegmentSize { get; set; }
 			public int? InitialLength { get; set; }
 			public Point? InitialPotition { get; set; }
 			public IGameCommand InitialCommand { get; set; }
-			public GameManager GameManager { get; set; }
-			public SnakeGame SnakeGame { get; set; }
 		}
 	}
 }
