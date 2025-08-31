@@ -93,38 +93,38 @@ namespace Bug.SnakeGame.Game
 
 			if (currSegmentPos.X == 0)
 			{
-				if (prevSegmentPos != null)
-					prevSegmentPos = prevSegmentPos.Value.X == GameConfig.GridColumns - 1 ? new Point(-1, prevSegmentPos.Value.Y) : prevSegmentPos;
+				if (prevSegmentPos?.X == GameConfig.GridColumns - 1)
+					prevSegmentPos = new Point(-1, prevSegmentPos.Value.Y);
 
-				if (nextSegmentPos != null)
-					nextSegmentPos = nextSegmentPos.Value.X == GameConfig.GridColumns - 1 ? new Point(-1, nextSegmentPos.Value.Y) : nextSegmentPos;
+				if (nextSegmentPos?.X == GameConfig.GridColumns - 1)
+					nextSegmentPos = new Point(-1, nextSegmentPos.Value.Y);
 			}
 
 			if (currSegmentPos.X == GameConfig.GridColumns - 1)
 			{
-				if (prevSegmentPos != null)
-					prevSegmentPos = prevSegmentPos.Value.X == 0 ? new Point(GameConfig.GridColumns, prevSegmentPos.Value.Y) : prevSegmentPos;
+				if (prevSegmentPos?.X == 0)
+					prevSegmentPos = new Point(GameConfig.GridColumns, prevSegmentPos.Value.Y);
 
-				if (nextSegmentPos != null)
-					nextSegmentPos = nextSegmentPos.Value.X == 0 ? new Point(GameConfig.GridColumns, nextSegmentPos.Value.Y) : nextSegmentPos;
+				if (nextSegmentPos?.X == 0)
+					nextSegmentPos = new Point(GameConfig.GridColumns, nextSegmentPos.Value.Y);
 			}
 
 			if (currSegmentPos.Y == 0)
 			{
-				if (prevSegmentPos != null)
-					prevSegmentPos = prevSegmentPos.Value.Y == GameConfig.GridRows - 1 ? new Point(prevSegmentPos.Value.X, -1) : prevSegmentPos;
+				if (prevSegmentPos?.Y == GameConfig.GridRows - 1)
+					prevSegmentPos = new Point(prevSegmentPos.Value.X, -1);
 
-				if (nextSegmentPos != null)
-					nextSegmentPos = nextSegmentPos.Value.Y == GameConfig.GridRows - 1 ? new Point(nextSegmentPos.Value.X, -1) : nextSegmentPos;
+				if (nextSegmentPos?.Y == GameConfig.GridRows - 1)
+					nextSegmentPos = new Point(nextSegmentPos.Value.X, -1);
 			}
 
 			if (currSegmentPos.Y == GameConfig.GridRows - 1)
 			{
-				if (prevSegmentPos != null)
-					prevSegmentPos = prevSegmentPos.Value.Y == 0 ? new Point(prevSegmentPos.Value.X, GameConfig.GridRows) : prevSegmentPos;
+				if (prevSegmentPos?.Y == 0)
+					prevSegmentPos = new Point(prevSegmentPos.Value.X, GameConfig.GridRows);
 
-				if (nextSegmentPos != null)
-					nextSegmentPos = nextSegmentPos.Value.Y == 0 ? new Point(nextSegmentPos.Value.X, GameConfig.GridRows) : nextSegmentPos;
+				if (nextSegmentPos?.Y == 0)
+					nextSegmentPos = new Point(nextSegmentPos.Value.X, GameConfig.GridRows);
 			}
 
 			// Head
