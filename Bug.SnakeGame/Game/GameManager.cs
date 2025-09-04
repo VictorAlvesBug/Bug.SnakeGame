@@ -17,6 +17,7 @@ namespace Bug.SnakeGame.Core
 
 		private SnakeController _snakeController;
 		private Fruit _fruit;
+		private static Score _score = new Score();
 
 		public GameManager()
 		{
@@ -29,7 +30,7 @@ namespace Bug.SnakeGame.Core
 				InitialCommand = new MoveRightCommand()
 			});
 
-			OnFruitEaten();
+			GenerateNewFruit();
 		}
 
 		public void ProcessInput(Keys keyCode) => _snakeController.ProcessInput(keyCode);
@@ -41,6 +42,12 @@ namespace Bug.SnakeGame.Core
 
 		public void OnFruitEaten(FruitEaten e = null)
 		{
+			GenerateNewFruit();
+			_score.AddOne();
+		}
+
+		private void GenerateNewFruit()
+		{
 			_fruit = Fruit.Generate(new Fruit.Options
 			{
 				BlockedPositions = _snakeController.GetSnakePositions()
@@ -51,11 +58,15 @@ namespace Bug.SnakeGame.Core
 		{
 			g.Clear(Color.White);
 
+			_score.Render(g);
+			g.TranslateTransform(0, Score.TopOffset);
+
 			Background.Render(g);
 
 			_fruit.Render(g, tileset);
 
 			_snakeController.Render(g, tileset);
+			g.ResetTransform();
 		}
 
 		private static Image ConvertToImage(byte[] bytes)
@@ -73,6 +84,7 @@ namespace Bug.SnakeGame.Core
 			_disposed = true;
 
 			_subscriptionFruitEaten.Dispose();
+			_score.ResetCurrent();
 		}
 	}
 }

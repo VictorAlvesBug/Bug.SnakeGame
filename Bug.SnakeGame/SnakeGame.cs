@@ -1,5 +1,6 @@
 using Bug.SnakeGame.Core;
 using Bug.SnakeGame.DomainEvents;
+using Bug.SnakeGame.Entities;
 using Bug.SnakeGame.Game;
 using Bug.SnakeGame.Infrastructure;
 
@@ -22,9 +23,9 @@ namespace Bug.SnakeGame
 			KeyDown += ProcessInput;
 
 			Width = GameConfig.ScreenWidth + 16;
-			Height = GameConfig.ScreenHeight + 39;
+			Height = GameConfig.ScreenHeight + 45 + Score.TopOffset;
 
-			_bitmap = new Bitmap(GameConfig.ScreenWidth, GameConfig.ScreenHeight);
+			_bitmap = new Bitmap(GameConfig.ScreenWidth, GameConfig.ScreenHeight + Score.TopOffset);
 			_graphics = Graphics.FromImage(_bitmap);
 		}
 
@@ -33,7 +34,6 @@ namespace Bug.SnakeGame
 			clock.Start();
 
 			_game?.Dispose();
-
 			_game = new GameManager();
 		}
 

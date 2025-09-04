@@ -1,4 +1,6 @@
-﻿namespace Bug.SnakeGame.Rendering
+﻿using Bug.SnakeGame.Entities;
+
+namespace Bug.SnakeGame.Rendering
 {
 	public static class Renderer
 	{

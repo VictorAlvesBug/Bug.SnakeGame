@@ -25,7 +25,6 @@ namespace Bug.SnakeGame.Game
 			}
 
 			_snake = new Snake(options);
-
 			_snake.SetupInitialMove(_commandInvoker, _inputHandler.Command);
 		}
 

@@ -12,7 +12,9 @@ namespace Bug.SnakeGame.Entities
 				{
 					var brush = x % 2 == y % 2 ? Brushes.Honeydew : Brushes.Lavender;
 					var tileSize = GameConfig.GridTileSize;
-					g.FillRectangle(brush, x * tileSize, y * tileSize, tileSize, tileSize);
+					var xPos = x * tileSize;
+					var yPos = y * tileSize;
+					g.FillRectangle(brush, xPos, yPos, tileSize, tileSize);
 				}
 			}
 		}
