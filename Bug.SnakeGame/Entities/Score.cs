@@ -26,10 +26,12 @@ namespace Bug.SnakeGame.Entities
 
 		public void Render(Graphics g)
 		{
-			var font = new Font(FontFamily.GenericMonospace, 20, FontStyle.Bold);
+			var font = new Font(FontFamily.GenericMonospace, 16, FontStyle.Bold);
 
-			g.DrawString(Current.ToString(), font, Brushes.Blue, 10, 10);
-			g.DrawString(Record.ToString(), font, Brushes.Green, GameConfig.ScreenWidth - 50, 10);
+			var currentScore = $"SCORE: {Current}";
+			var record = $"RECORD: {Record}";
+			g.DrawString(currentScore, font, Brushes.Blue, 10, 10);
+			g.DrawString(record, font, Brushes.Green, GameConfig.ScreenWidth - 180, 10);
 		}
 	}
 }
